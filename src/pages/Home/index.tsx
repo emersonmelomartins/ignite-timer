@@ -52,6 +52,13 @@ export function Home() {
 
     if (activeCycle) {
       interval = setInterval(() => {
+        // segundos podem não ser exatamente os mesmos segundos
+        // dependendo da maquina podem gerar alguns atrasos
+        // e calcular de forma incorreta
+
+        // pra resolver isso utilizar a data/hora de inicio
+        // e calcular a diferença da data atual com a que
+        // foi iniciada é uma solução
         setAmountSecondsPast(
           differenceInSeconds(new Date(), activeCycle.startDate),
         )
@@ -99,6 +106,12 @@ export function Home() {
   // adiciona '0' para sempre manter 2 digitos
   const minutes = String(minutesAmount).padStart(2, '0')
   const seconds = String(secondsAmount).padStart(2, '0')
+
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutes}:${seconds}`
+    }
+  }, [minutes, seconds, activeCycle])
 
   return (
     <HomeContainer>
