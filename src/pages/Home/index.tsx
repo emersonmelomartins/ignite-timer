@@ -32,6 +32,7 @@ interface Cycle {
   minutesAmount: number
   startDate: Date
   interruptedDate?: Date
+  finishedDate?: Date
 }
 
 export function Home() {
@@ -49,6 +50,9 @@ export function Home() {
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
+  // transforma minutos em segundos
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
+
   useEffect(() => {
     let interval: number
 
@@ -61,9 +65,28 @@ export function Home() {
         // pra resolver isso utilizar a data/hora de inicio
         // e calcular a diferença da data atual com a que
         // foi iniciada é uma solução
-        setAmountSecondsPast(
-          differenceInSeconds(new Date(), activeCycle.startDate),
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate,
         )
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles((state) =>
+            state.map((cycle) => {
+              if (cycle.id === activeCycleId) {
+                return { ...cycle, finishedDate: new Date() }
+              } else {
+                return cycle
+              }
+            }),
+          )
+
+          setAmountSecondsPast(totalSeconds)
+
+          clearInterval(interval)
+        } else {
+          setAmountSecondsPast(secondsDifference)
+        }
       }, 1000)
     }
 
@@ -73,7 +96,7 @@ export function Home() {
     return () => {
       clearInterval(interval)
     }
-  }, [activeCycle])
+  }, [activeCycle, activeCycleId, totalSeconds])
 
   const task = watch('task')
   const isSubmitDisable = !task
@@ -96,8 +119,8 @@ export function Home() {
   }
 
   function handleInterruptCycle() {
-    setCycles(
-      cycles.map((cycle) => {
+    setCycles((state) =>
+      state.map((cycle) => {
         if (cycle.id === activeCycleId) {
           return { ...cycle, interruptedDate: new Date() }
         } else {
@@ -108,9 +131,6 @@ export function Home() {
 
     setActiveCycleId(null)
   }
-
-  // transforma minutos em segundos
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
   // verifica a quantia restante de segundos passados
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPast : 0
