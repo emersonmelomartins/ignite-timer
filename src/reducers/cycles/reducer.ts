@@ -18,12 +18,6 @@ interface CyclesState {
 export function cyclesReducer(state: CyclesState, action: any) {
   switch (action.type) {
     case ActionTypes.ADD_NEW_CYCLE:
-      // return {
-      //   ...state,
-      //   cycles: [...state.cycles, action.payload.newCycle],
-      //   activeCycleId: action.payload.newCycle.id,
-      // }
-
       // immer => facilita a alteração de estados imutaveis
       // produce => facilita a alteração de um estado
       // parecendo como se tivesse alterando uma variavel normal
@@ -32,19 +26,6 @@ export function cyclesReducer(state: CyclesState, action: any) {
         draft.activeCycleId = action.payload.newCycle.id
       })
     case ActionTypes.INTERRUPT_CURRENT_CYCLE: {
-      // return {
-      //   ...state,
-      //   cycles: state.cycles.map((cycle) => {
-      //     if (cycle.id === state.activeCycleId) {
-      //       return { ...cycle, interruptedDate: new Date() }
-      //     } else {
-      //       return cycle
-      //     }
-      //   }),
-
-      //   activeCycleId: null,
-      // }
-
       const currentCycleIndex = state.cycles.findIndex(
         (cycle) => cycle.id === state.activeCycleId,
       )
@@ -57,19 +38,6 @@ export function cyclesReducer(state: CyclesState, action: any) {
       })
     }
     case ActionTypes.MARK_CURRENT_CYCLE_AS_FINISHED: {
-      // return {
-      //   ...state,
-      //   cycles: state.cycles.map((cycle) => {
-      //     if (cycle.id === state.activeCycleId) {
-      //       return { ...cycle, finishedDate: new Date() }
-      //     } else {
-      //       return cycle
-      //     }
-      //   }),
-
-      //   activeCycleId: null,
-      // }
-
       const currentCycleIndex = state.cycles.findIndex(
         (cycle) => cycle.id === state.activeCycleId,
       )
